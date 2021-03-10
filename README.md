@@ -5,4 +5,4 @@ Aplikacja obsługuje przelewy między graczami, jak i również z oraz do banku.
 
 
 Dostępna jest pod adresem:
-monopoly-by-toxy.herokuapp.com
+https://monopoly-by-toxy.herokuapp.com/main-menu
