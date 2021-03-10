@@ -1,4 +1,4 @@
-package pl.monopoly.Monopoly;
+package pl.kiepura.monopoly;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class VideoAppApplicationTests {
+public class MonopolyApplicationTests {
 
     @Test
     public void contextLoads() {

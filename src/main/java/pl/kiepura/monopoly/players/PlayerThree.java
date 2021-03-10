@@ -1,4 +1,4 @@
-package pl.monopoly.Monopoly.players;
+package pl.kiepura.monopoly.players;
 
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -12,33 +12,31 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.router.Route;
-import pl.monopoly.Monopoly.entity.Player;
-import pl.monopoly.Monopoly.repo.PlayerRepo;
+import pl.kiepura.monopoly.entity.Player;
+import pl.kiepura.monopoly.repo.PlayerRepo;
 
 import javax.transaction.Transactional;
 
 
-@Route("player-four")
-public class PlayerFour extends VerticalLayout {
+@Route("player-three")
+public class PlayerThree extends VerticalLayout {
     PlayerRepo playerRepo;
     long fromWho;
     long toWho;
     Integer howMuch;
 
 
-
-    public PlayerFour(PlayerRepo playerRepo){
+    public PlayerThree(PlayerRepo playerRepo) {
         this.playerRepo = playerRepo;
 
-        Text textPlayerFour = new Text("Gracz " + playerRepo.getPlayerFour());
-        Label labelCash = new Label("Posiadana gotówka: " + playerRepo.getPlayerFourCash());
+        Text textPlayerThree = new Text("Gracz " + playerRepo.getPlayerThree());
+        Label labelCash = new Label("Posiadana gotówka: " + playerRepo.getPlayerThreeCash());
 
         IntegerField integerFieldHowMuch = new IntegerField("Ile chcesz przelać?");
 
 
         Dialog dialogSendMoney = new Dialog();
         Span whoSendMoney = new Span("Komu chcesz wysłać pieniądze?");
-
 
 
         //gracz 1
@@ -59,10 +57,10 @@ public class PlayerFour extends VerticalLayout {
             UI.getCurrent().getPage().reload();
         });
 
-        // gracz 3
-        Button buttonPlayerThree = new Button(playerRepo.getPlayerThree());
-        buttonPlayerThree.addClickListener(ClickEvent -> {
-            transferMoneyToPlayerThree(fromWho, toWho, howMuch, integerFieldHowMuch);
+        // gracz 4
+        Button buttonPlayerFour = new Button(playerRepo.getPlayerFour());
+        buttonPlayerFour.addClickListener(ClickEvent -> {
+            transferMoneyToPlayerFour(fromWho, toWho, howMuch, integerFieldHowMuch);
             integerFieldHowMuch.clear();
             dialogSendMoney.close();
             UI.getCurrent().getPage().reload();
@@ -77,11 +75,11 @@ public class PlayerFour extends VerticalLayout {
             UI.getCurrent().getPage().reload();
         });
 
-
         ProgressBar progressBarSplitUIDialog = new ProgressBar();
         progressBarSplitUIDialog.setIndeterminate(true);
 
-        dialogSendMoney.add(whoSendMoney, progressBarSplitUIDialog, buttonPlayerOne, buttonPlayerTwo, buttonPlayerThree, buttonBanker);
+
+        dialogSendMoney.add(whoSendMoney, progressBarSplitUIDialog, buttonPlayerOne, buttonPlayerTwo, buttonPlayerFour, buttonBanker);
 
 
         Button buttonMainMenu = new Button("Menu główne", new Icon(VaadinIcon.MENU));
@@ -91,7 +89,6 @@ public class PlayerFour extends VerticalLayout {
                         ui.navigate("main-menu")));
 
 
-
         Button buttonSendMoney = new Button("Wyślij pieniądze!", new Icon(VaadinIcon.MONEY_WITHDRAW));
         buttonSendMoney.setIconAfterText(true);
         buttonSendMoney.addClickListener(ClickEvent -> {
@@ -99,15 +96,13 @@ public class PlayerFour extends VerticalLayout {
         });
 
 
-
-
-
-        add(textPlayerFour, labelCash, integerFieldHowMuch, buttonSendMoney, buttonMainMenu, dialogSendMoney);
+        add(textPlayerThree, labelCash, integerFieldHowMuch, buttonSendMoney, buttonMainMenu, dialogSendMoney);
     }
+
     @Transactional
     private void transferMoneyToBank(long fromWho, Integer howMuch, IntegerField integerFieldHowMuch) {
         howMuch = Integer.parseInt(String.valueOf(integerFieldHowMuch.getValue()));
-        Player sourcePlayer = playerRepo.getById(4L);
+        Player sourcePlayer = playerRepo.getById(3L);
         sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
 
         playerRepo.save(sourcePlayer);
@@ -116,7 +111,7 @@ public class PlayerFour extends VerticalLayout {
     @Transactional
     private void transferMoneyToPlayerOne(Long fromWho, Long toWho, Integer howMuch, IntegerField integerFieldHowMuch) {
         howMuch = Integer.parseInt(String.valueOf(integerFieldHowMuch.getValue()));
-        Player sourcePlayer = playerRepo.getById(4L);
+        Player sourcePlayer = playerRepo.getById(3L);
         sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
         Player targetPlayer = playerRepo.getById(1L);
         targetPlayer.setCash(targetPlayer.getCash() + howMuch);
@@ -126,11 +121,10 @@ public class PlayerFour extends VerticalLayout {
     }
 
 
-
     @Transactional
     private void transferMoneyToPlayerTwo(Long fromWho, Long toWho, Integer howMuch, IntegerField integerFieldHowMuch) {
         howMuch = Integer.parseInt(String.valueOf(integerFieldHowMuch.getValue()));
-        Player sourcePlayer = playerRepo.getById(4L);
+        Player sourcePlayer = playerRepo.getById(3L);
         sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
         Player targetPlayer = playerRepo.getById(2L);
         targetPlayer.setCash(targetPlayer.getCash() + howMuch);
@@ -140,11 +134,11 @@ public class PlayerFour extends VerticalLayout {
     }
 
     @Transactional
-    private void transferMoneyToPlayerThree(Long fromWho, Long toWho, Integer howMuch, IntegerField integerFieldHowMuch) {
+    private void transferMoneyToPlayerFour(Long fromWho, Long toWho, Integer howMuch, IntegerField integerFieldHowMuch) {
         howMuch = Integer.parseInt(String.valueOf(integerFieldHowMuch.getValue()));
-        Player sourcePlayer = playerRepo.getById(4L);
+        Player sourcePlayer = playerRepo.getById(3L);
         sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
-        Player targetPlayer = playerRepo.getById(3L);
+        Player targetPlayer = playerRepo.getById(4L);
         targetPlayer.setCash(targetPlayer.getCash() + howMuch);
 
         playerRepo.save(sourcePlayer);

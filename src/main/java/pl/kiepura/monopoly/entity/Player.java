@@ -1,4 +1,4 @@
-package pl.monopoly.Monopoly.entity;
+package pl.kiepura.monopoly.entity;
 
 
 import lombok.AllArgsConstructor;
@@ -19,8 +19,8 @@ import javax.persistence.Id;
 @Entity
 public class Player {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;

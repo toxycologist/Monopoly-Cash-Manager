@@ -1,4 +1,4 @@
-package pl.monopoly.Monopoly.players;
+package pl.kiepura.monopoly.players;
 
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -12,8 +12,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.router.Route;
-import pl.monopoly.Monopoly.entity.Player;
-import pl.monopoly.Monopoly.repo.PlayerRepo;
+import pl.kiepura.monopoly.entity.Player;
+import pl.kiepura.monopoly.repo.PlayerRepo;
 
 import javax.transaction.Transactional;
 
@@ -26,8 +26,7 @@ public class PlayerOne extends VerticalLayout {
     Integer howMuch;
 
 
-
-    public PlayerOne(PlayerRepo playerRepo){
+    public PlayerOne(PlayerRepo playerRepo) {
         this.playerRepo = playerRepo;
 
         Text textPlayerOne = new Text("Gracz " + playerRepo.getPlayerOne());
@@ -35,10 +34,8 @@ public class PlayerOne extends VerticalLayout {
         IntegerField integerFieldHowMuch = new IntegerField("Ile chcesz przelać?");
 
 
-
         Dialog dialogSendMoney = new Dialog();
         Span whoSendMoney = new Span("Komu chcesz wysłać pieniądze?");
-
 
 
         //gracz 2
@@ -91,7 +88,6 @@ public class PlayerOne extends VerticalLayout {
                         ui.navigate("main-menu")));
 
 
-
         Button buttonSendMoney = new Button("Wyślij pieniądze!", new Icon(VaadinIcon.MONEY_WITHDRAW));
         buttonSendMoney.setIconAfterText(true);
         buttonSendMoney.addClickListener(ClickEvent -> {
@@ -102,7 +98,6 @@ public class PlayerOne extends VerticalLayout {
         //---------------------------------------------------------------------------------
         //----------------------------------MIEJSCE BANKU----------------------------------
         //---------------------------------------------------------------------------------
-
 
 
         ProgressBar progressBarSplitUI = new ProgressBar();
@@ -171,12 +166,9 @@ public class PlayerOne extends VerticalLayout {
         dialogSendMoneyFromBank.add(whoSendMoneyFromBank, progressBarSplitUIBank, buttonPlayerOneBank, buttonPlayerTwoBank, buttonPlayerThreeBank, buttonPlayerFourBank);
 
 
-
-
-
-
         add(textPlayerOne, labelCash, integerFieldHowMuch, buttonSendMoney, buttonMainMenu, dialogSendMoney, progressBarSplitUI, integerFieldHowMuchFromBank, buttonBank);
     }
+
     @Transactional
     private void transferMoneyToBank(long fromWho, Integer howMuch, IntegerField integerFieldHowMuch) {
         howMuch = Integer.parseInt(String.valueOf(integerFieldHowMuch.getValue()));
@@ -197,7 +189,6 @@ public class PlayerOne extends VerticalLayout {
         playerRepo.save(sourcePlayer);
         playerRepo.save(targetPlayer);
     }
-
 
 
     @Transactional
@@ -225,9 +216,7 @@ public class PlayerOne extends VerticalLayout {
     }
 
 
-
     // STERFA BANKU
-
 
 
     @Transactional
@@ -240,7 +229,6 @@ public class PlayerOne extends VerticalLayout {
     }
 
 
-
     @Transactional
     private void transferMoneyFromBankToPlayerTwo(Long toWho, Integer howMuch, IntegerField integerFieldHowMuchFromBank) {
         howMuch = Integer.parseInt(String.valueOf(integerFieldHowMuchFromBank.getValue()));
@@ -249,7 +237,6 @@ public class PlayerOne extends VerticalLayout {
 
         playerRepo.save(targetPlayer);
     }
-
 
 
     @Transactional
@@ -262,8 +249,6 @@ public class PlayerOne extends VerticalLayout {
     }
 
 
-
-
     @Transactional
     private void transferMoneyFromBankToPlayerFour(Long toWho, Integer howMuch, IntegerField integerFieldHowMuchFromBank) {
         howMuch = Integer.parseInt(String.valueOf(integerFieldHowMuchFromBank.getValue()));
@@ -272,12 +257,6 @@ public class PlayerOne extends VerticalLayout {
 
         playerRepo.save(targetPlayer);
     }
-
-
-
-
-
-
 
 
 }

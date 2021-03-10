@@ -1,10 +1,12 @@
-package pl.monopoly.Monopoly.repo;
+package pl.kiepura.monopoly.repo;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import pl.monopoly.Monopoly.entity.Player;
-import pl.monopoly.Monopoly.entity.PlayerDto;
+import org.springframework.transaction.annotation.Transactional;
+import pl.kiepura.monopoly.entity.Player;
+import pl.kiepura.monopoly.entity.PlayerDto;
 
 import java.util.List;
 
@@ -13,6 +15,10 @@ public interface PlayerRepo extends CrudRepository<Player, Long> {
 
     Player getById(Long id);
 
+    @Transactional
+    @Modifying
+    @Query(value = "TRUNCATE TABLE PLAYER; ALTER TABLE player ALTER COLUMN id RESTART WITH 1;", nativeQuery = true)
+    void clearPlayers();
 
     @Query(value = "SELECT name as name, cash as cash FROM Player", nativeQuery = true)
     List<PlayerDto> getPlayers();
@@ -20,7 +26,6 @@ public interface PlayerRepo extends CrudRepository<Player, Long> {
 
     @Query(value = "SELECT name as name FROM Player", nativeQuery = true)
     List<PlayerDto> getPlayersNames();
-
 
 
     // gracz 1
@@ -56,10 +61,6 @@ public interface PlayerRepo extends CrudRepository<Player, Long> {
 
     @Query(value = "SELECT CASH from Player WHERE ID=4", nativeQuery = true)
     Integer getPlayerFourCash();
-
-
-
-
 
 
 }

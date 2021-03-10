@@ -1,4 +1,4 @@
-package pl.monopoly.Monopoly.gui;
+package pl.kiepura.monopoly.gui;
 
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
@@ -7,25 +7,26 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
-import pl.monopoly.Monopoly.entity.Player;
-import pl.monopoly.Monopoly.repo.PlayerRepo;
+import pl.kiepura.monopoly.entity.Player;
+import pl.kiepura.monopoly.repo.PlayerRepo;
 
 
-@Route("add-player")
-public class AddPlayerGUI extends VerticalLayout {
+@Route("settings")
+public class SettingsGUI extends VerticalLayout {
 
     PlayerRepo playerRepo;
 
 
     @Autowired
-    public AddPlayerGUI(PlayerRepo playerRepo) {
+    public SettingsGUI(PlayerRepo playerRepo) {
         this.playerRepo = playerRepo;
 
-        Text textAddPlayerSection = new Text("Sekcja dodawania graczy");
+        Text textAddPlayerSection = new Text("USTAWIENIA GRY");
         TextField textFieldName = new TextField("Wpisz imię gracza");
         Text textWarning = new Text("UWAGA! Pierwszy dodany gracz przejmie rolę bankiera!");
         IntegerField integerFieldStartCash = new IntegerField("Wpisz początkową ilość pieniędzy");
@@ -57,14 +58,40 @@ public class AddPlayerGUI extends VerticalLayout {
                         ui.navigate("main-menu")));
 
 
+        ProgressBar progressBarSplitUIDialog = new ProgressBar();
+        ProgressBar progressBarSplitUIDialog2 = new ProgressBar();
+        ProgressBar progressBarSplitUIDialogConfirm = new ProgressBar();
+        progressBarSplitUIDialogConfirm.setIndeterminate(true);
+
+        Button buttonDeleteAllPlayers = new Button("Usuń wszystkich graczy", new Icon(VaadinIcon.ERASER));
+        buttonDeleteAllPlayers.setIconAfterText(true);
+
+
+        Button buttonConfirmDeleteAllPlayers = new Button("Tak, usuń wszyskich graczy!");
+        Button buttonCancelDeleting = new Button("Anuluj!");
+
+
+        Dialog dialogDeleteAllPlayerConfirmation = new Dialog();
+        Span spanConfirm = new Span("Czy na pewno chcesz usunąć wszystkich graczy?");
+
+        buttonDeleteAllPlayers.addClickListener(ClickEvent -> dialogDeleteAllPlayerConfirmation.open());
+
+        dialogDeleteAllPlayerConfirmation.add(spanConfirm, progressBarSplitUIDialogConfirm, buttonConfirmDeleteAllPlayers, buttonCancelDeleting);
+
+        buttonCancelDeleting.addClickListener(ClickEvent -> dialogDeleteAllPlayerConfirmation.close());
+
+        buttonConfirmDeleteAllPlayers.addClickListener(ClickEvent -> {
+            playerRepo.clearPlayers();
+            dialogDeleteAllPlayerConfirmation.close();
+        });
+
+
         add(textAddPlayerSection, textFieldName, textWarning, integerFieldStartCash,
-                buttonSavePlayer, dialogAddedPlayer, buttonMainMenu);
+                buttonSavePlayer, progressBarSplitUIDialog, buttonDeleteAllPlayers, progressBarSplitUIDialog2, dialogAddedPlayer,  buttonMainMenu);
     }
 
 
-
-
-    public void addPlayer(TextField textFieldName, IntegerField integerFieldStartCash){
+    public void addPlayer(TextField textFieldName, IntegerField integerFieldStartCash) {
         Player player = new Player();
         player.setName(String.valueOf(textFieldName.getValue()));
         player.setCash(Integer.parseInt(String.valueOf(integerFieldStartCash.getValue())));

@@ -1,6 +1,5 @@
-package pl.monopoly.Monopoly.gui;
+package pl.kiepura.monopoly.gui;
 
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -8,13 +7,10 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import pl.monopoly.Monopoly.entity.Player;
-import pl.monopoly.Monopoly.entity.PlayerDto;
-import pl.monopoly.Monopoly.repo.PlayerRepo;
+import pl.kiepura.monopoly.entity.PlayerDto;
+import pl.kiepura.monopoly.repo.PlayerRepo;
 
 import java.util.List;
 
@@ -25,15 +21,15 @@ public class MainMenuGUI extends VerticalLayout {
     private final PlayerRepo playerRepo;
 
     @Autowired
-    public MainMenuGUI(PlayerRepo playerRepo){
+    public MainMenuGUI(PlayerRepo playerRepo) {
 
         Image imageMonopoly = new Image("https://i.pinimg.com/originals/b0/b2/48/b0b248f91cefb344ec92b272eadd860b.png", "Monopoly");
-        imageMonopoly.setHeight("140px");
-        imageMonopoly.setWidth("450px");
-        Button buttonAddPlayer = new Button("Dodaj graczy!", new Icon(VaadinIcon.PLUS));
+        imageMonopoly.setHeight("90px");
+        imageMonopoly.setWidth("300px");
+        Button buttonAddPlayer = new Button("Ustawienia gry", new Icon(VaadinIcon.COGS));
         buttonAddPlayer.addClickListener(e ->
                 buttonAddPlayer.getUI().ifPresent(ui ->
-                        ui.navigate("add-player")));
+                        ui.navigate("settings")));
 
 
         this.playerRepo = playerRepo;
@@ -47,10 +43,12 @@ public class MainMenuGUI extends VerticalLayout {
         gridPlayers.setHeightByRows(true);
 
 
-        Button buttonPlayerOne = new Button("Panel gracza " + playerRepo.getPlayerOne() + "                                [Bankier]", new Icon(VaadinIcon.USER));
+        Button buttonPlayerOne = new Button("Panel gracza " + playerRepo.getPlayerOne() + " [Bankier]", new Icon(VaadinIcon.USER));
         Button buttonPlayerTwo = new Button("Panel gracza " + playerRepo.getPlayerTwo(), new Icon(VaadinIcon.USER));
         Button buttonPlayerThree = new Button("Panel gracza " + playerRepo.getPlayerThree(), new Icon(VaadinIcon.USER));
         Button buttonPlayerFour = new Button("Panel gracza " + playerRepo.getPlayerFour(), new Icon(VaadinIcon.USER));
+
+
 
         buttonPlayerOne.addClickListener(e ->
                 buttonPlayerOne.getUI().ifPresent(ui ->
@@ -74,9 +72,6 @@ public class MainMenuGUI extends VerticalLayout {
         add(imageMonopoly, buttonAddPlayer, gridPlayers,
                 buttonPlayerOne, buttonPlayerTwo, buttonPlayerThree, buttonPlayerFour);
     }
-
-
-
 
 
 }

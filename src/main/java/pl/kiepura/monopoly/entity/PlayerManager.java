@@ -1,16 +1,16 @@
-package pl.monopoly.Monopoly.entity;
+package pl.kiepura.monopoly.entity;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import pl.monopoly.Monopoly.repo.PlayerRepo;
+import pl.kiepura.monopoly.repo.PlayerRepo;
 
 @Service
 public class PlayerManager {
 
-    private PlayerRepo playerRepo;
+    private final PlayerRepo playerRepo;
 
 
     @Autowired
@@ -23,7 +23,6 @@ public class PlayerManager {
     }
 
 
-
     public Iterable<Player> findAll() {
         return playerRepo.findAll();
     }
@@ -33,10 +32,8 @@ public class PlayerManager {
     }
 
 
-
-
     @EventListener(ApplicationReadyEvent.class)
-    public void fillDB(){
+    public void fillDB() {
         save(new Player(1L, "Marcin", 6000));
         save(new Player(2L, "Dagmara", 6000));
         save(new Player(3L, "Ola", 6000));
