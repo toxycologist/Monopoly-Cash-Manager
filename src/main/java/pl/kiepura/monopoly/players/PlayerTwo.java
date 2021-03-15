@@ -26,6 +26,8 @@ public class PlayerTwo extends VerticalLayout {
     Integer howMuch;
 
 
+
+
     public PlayerTwo(PlayerRepo playerRepo) {
         this.playerRepo = playerRepo;
 

@@ -32,13 +32,13 @@ public class PlayerManager {
     }
 
 
-    @EventListener(ApplicationReadyEvent.class)
+/*    @EventListener(ApplicationReadyEvent.class)
     public void fillDB() {
         save(new Player(1L, "Marcin", 6000));
         save(new Player(2L, "Dagmara", 6000));
         save(new Player(3L, "Ola", 6000));
         save(new Player(4L, "Damian", 6000));
 
-    }
+    }*/
 
 }

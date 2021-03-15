@@ -20,12 +20,13 @@ public class MainMenuGUI extends VerticalLayout {
 
     private final PlayerRepo playerRepo;
 
-    @Autowired
+
     public MainMenuGUI(PlayerRepo playerRepo) {
 
         Image imageMonopoly = new Image("https://i.pinimg.com/originals/b0/b2/48/b0b248f91cefb344ec92b272eadd860b.png", "Monopoly");
         imageMonopoly.setHeight("90px");
         imageMonopoly.setWidth("300px");
+         
         Button buttonAddPlayer = new Button("Ustawienia gry", new Icon(VaadinIcon.COGS));
         buttonAddPlayer.addClickListener(e ->
                 buttonAddPlayer.getUI().ifPresent(ui ->
