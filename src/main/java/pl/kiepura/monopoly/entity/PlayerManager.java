@@ -4,6 +4,7 @@ package pl.kiepura.monopoly.entity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.kiepura.monopoly.repo.PlayerRepo;
 
@@ -18,9 +19,6 @@ public class PlayerManager {
         this.playerRepo = playerRepo;
     }
 
-    public Player findById(Long id) {
-        return playerRepo.findById(id).get();
-    }
 
 
     public Iterable<Player> findAll() {
@@ -31,14 +29,5 @@ public class PlayerManager {
         return playerRepo.save(player);
     }
 
-
-/*    @EventListener(ApplicationReadyEvent.class)
-    public void fillDB() {
-        save(new Player(1L, "Marcin", 6000));
-        save(new Player(2L, "Dagmara", 6000));
-        save(new Player(3L, "Ola", 6000));
-        save(new Player(4L, "Damian", 6000));
-
-    }*/
 
 }

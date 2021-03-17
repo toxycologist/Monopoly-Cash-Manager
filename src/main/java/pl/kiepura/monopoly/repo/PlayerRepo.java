@@ -15,22 +15,24 @@ public interface PlayerRepo extends CrudRepository<Player, Long> {
 
     Player getById(Long id);
 
+    Player findByUsername(String username);
+
     @Transactional
     @Modifying
-    @Query(value = "TRUNCATE TABLE player; ALTER TABLE player ALTER COLUMN id RESTART WITH 1;", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE player", nativeQuery = true)
     void clearPlayers();
 
-    @Query(value = "SELECT name as name, cash as cash FROM player", nativeQuery = true)
+    @Query(value = "SELECT username as username, cash as cash FROM player WHERE (id BETWEEN 1 AND 4)", nativeQuery = true)
     List<PlayerDto> getPlayers();
 
 
-    @Query(value = "SELECT name as name FROM player", nativeQuery = true)
+    @Query(value = "SELECT username as username FROM player", nativeQuery = true)
     List<PlayerDto> getPlayersNames();
 
 
     // gracz 1
 
-    @Query(value = "SELECT name from player WHERE ID=1", nativeQuery = true)
+    @Query(value = "SELECT username from player WHERE ID=1", nativeQuery = true)
     String getPlayerOne();
 
     @Query(value = "SELECT cash from player WHERE ID=1", nativeQuery = true)
@@ -39,7 +41,7 @@ public interface PlayerRepo extends CrudRepository<Player, Long> {
 
 // gracz 2
 
-    @Query(value = "SELECT name from player WHERE ID=2", nativeQuery = true)
+    @Query(value = "SELECT username from player WHERE ID=2", nativeQuery = true)
     String getPlayerTwo();
 
     @Query(value = "SELECT cash from player WHERE ID=2", nativeQuery = true)
@@ -48,7 +50,7 @@ public interface PlayerRepo extends CrudRepository<Player, Long> {
     // gracz 3
 
 
-    @Query(value = "SELECT name from player WHERE ID=3", nativeQuery = true)
+    @Query(value = "SELECT username from player WHERE ID=3", nativeQuery = true)
     String getPlayerThree();
 
     @Query(value = "SELECT cash from player WHERE ID=3", nativeQuery = true)
@@ -56,7 +58,7 @@ public interface PlayerRepo extends CrudRepository<Player, Long> {
 
     // gracz 4
 
-    @Query(value = "SELECT name from player WHERE ID=4", nativeQuery = true)
+    @Query(value = "SELECT username from player WHERE ID=4", nativeQuery = true)
     String getPlayerFour();
 
     @Query(value = "SELECT cash from player WHERE ID=4", nativeQuery = true)

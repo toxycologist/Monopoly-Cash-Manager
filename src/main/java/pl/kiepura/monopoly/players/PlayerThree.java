@@ -11,6 +11,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import pl.kiepura.monopoly.entity.Player;
 import pl.kiepura.monopoly.repo.PlayerRepo;
@@ -19,6 +20,7 @@ import javax.transaction.Transactional;
 
 
 @Route("player-three")
+@PageTitle("Monopoly - Gracz #3")
 public class PlayerThree extends VerticalLayout {
     PlayerRepo playerRepo;
     long fromWho;

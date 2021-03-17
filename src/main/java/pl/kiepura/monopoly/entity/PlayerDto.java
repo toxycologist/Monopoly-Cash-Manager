@@ -4,8 +4,9 @@ public interface PlayerDto {
 
     Long getId();
 
-    String getName();
+    String getUsername();
 
     Integer getCash();
+
 
 }

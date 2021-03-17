@@ -1,7 +1,8 @@
 package pl.kiepura.monopoly.gui;
 
-import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -10,63 +11,39 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.kiepura.monopoly.entity.Player;
 import pl.kiepura.monopoly.repo.PlayerRepo;
 
 
 @Route("settings")
+@PageTitle("Monopoly - Ustawienia")
 public class SettingsGUI extends VerticalLayout {
 
     PlayerRepo playerRepo;
 
 
     @Autowired
-    public SettingsGUI(PlayerRepo playerRepo) {
+    public void init(PlayerRepo playerRepo, PasswordEncoder passwordEncoder) {
         this.playerRepo = playerRepo;
 
-        Text textAddPlayerSection = new Text("USTAWIENIA GRY");
-        TextField textFieldName = new TextField("Wpisz imię gracza");
-        Text textWarning = new Text("UWAGA! Pierwszy dodany gracz przejmie rolę bankiera!");
-        IntegerField integerFieldStartCash = new IntegerField("Wpisz początkową ilość pieniędzy");
-        integerFieldStartCash.setWidth("300px");
+               addPlayer(passwordEncoder);
+               mainMenu();
+               deletePlayers();
 
-        Dialog dialogAddedPlayer = new Dialog();
-        dialogAddedPlayer.setCloseOnEsc(false);
-        dialogAddedPlayer.setCloseOnOutsideClick(true);
-        Span messageOK = new Span("Dodano nowego gracza!   ");
-        Button confirmButton = new Button("OK!", event -> {
-            dialogAddedPlayer.close();
-        });
-        dialogAddedPlayer.add(messageOK, confirmButton);
+    }
 
 
-        Button buttonSavePlayer = new Button("Dodaj gracza!", new Icon(VaadinIcon.THUMBS_UP));
-        buttonSavePlayer.setIconAfterText(true);
-        buttonSavePlayer.addClickListener(ClickEvent -> {
-            addPlayer(textFieldName, integerFieldStartCash);
-            textFieldName.clear();
-            integerFieldStartCash.clear();
-            dialogAddedPlayer.open();
-        });
 
-        Button buttonMainMenu = new Button("Menu główne", new Icon(VaadinIcon.MENU));
-        buttonMainMenu.setIconAfterText(true);
-        buttonMainMenu.addClickListener(e ->
-                buttonMainMenu.getUI().ifPresent(ui ->
-                        ui.navigate("main-menu")));
-
-
-        ProgressBar progressBarSplitUIDialog = new ProgressBar();
-        ProgressBar progressBarSplitUIDialog2 = new ProgressBar();
-        ProgressBar progressBarSplitUIDialogConfirm = new ProgressBar();
-        progressBarSplitUIDialogConfirm.setIndeterminate(true);
-
+    private void deletePlayers() {
+        ProgressBar progressBarSplitUI = new ProgressBar();
+        ProgressBar progressBarSplitUI2 = new ProgressBar();
+        progressBarSplitUI2.setIndeterminate(true);
         Button buttonDeleteAllPlayers = new Button("Usuń wszystkich graczy", new Icon(VaadinIcon.ERASER));
         buttonDeleteAllPlayers.setIconAfterText(true);
-
 
         Button buttonConfirmDeleteAllPlayers = new Button("Tak, usuń wszyskich graczy!");
         Button buttonCancelDeleting = new Button("Anuluj!");
@@ -77,7 +54,7 @@ public class SettingsGUI extends VerticalLayout {
 
         buttonDeleteAllPlayers.addClickListener(ClickEvent -> dialogDeleteAllPlayerConfirmation.open());
 
-        dialogDeleteAllPlayerConfirmation.add(spanConfirm, progressBarSplitUIDialogConfirm, buttonConfirmDeleteAllPlayers, buttonCancelDeleting);
+        dialogDeleteAllPlayerConfirmation.add(spanConfirm, progressBarSplitUI2, buttonConfirmDeleteAllPlayers, buttonCancelDeleting);
 
         buttonCancelDeleting.addClickListener(ClickEvent -> dialogDeleteAllPlayerConfirmation.close());
 
@@ -87,16 +64,67 @@ public class SettingsGUI extends VerticalLayout {
         });
 
 
-        add(textAddPlayerSection, textFieldName, textWarning, integerFieldStartCash,
-                buttonSavePlayer, progressBarSplitUIDialog, buttonDeleteAllPlayers, progressBarSplitUIDialog2, dialogAddedPlayer,  buttonMainMenu);
+        add(buttonDeleteAllPlayers, progressBarSplitUI, dialogDeleteAllPlayerConfirmation);
     }
 
+    private void mainMenu() {
+        ProgressBar progressBarSplitUI = new ProgressBar();
+        Button button = new Button("Menu główne", new Icon(VaadinIcon.MENU));
+        button.setIconAfterText(true);
+        button.addClickListener(event -> UI.getCurrent().getPage().setLocation("main-menu"));
 
-    public void addPlayer(TextField textFieldName, IntegerField integerFieldStartCash) {
+        add(button, progressBarSplitUI);
+    }
+
+    private void addPlayer(PasswordEncoder passwordEncoder) {
+            ProgressBar progressBarSplitUI = new ProgressBar();
+            TextField textFieldName = new TextField("Wpisz imię (login) :");
+            TextField textFieldPassword = new TextField("Wpisz hasło:");
+            IntegerField integerFieldStartCash = new IntegerField("Wpisz gotówkę początkową");
+            integerFieldStartCash.setWidth("200px");
+            ComboBox comboBoxRole = new ComboBox("Wybierz rolę gracza");
+            comboBoxRole.setItems("Gracz 1 + Bank", "Gracz 2", "Gracz 3", "Gracz 4");
+
+
+            Dialog dialogAddedPlayer = new Dialog();
+            dialogAddedPlayer.setCloseOnEsc(false);
+            dialogAddedPlayer.setCloseOnOutsideClick(true);
+            Span messageOK = new Span("Dodano nowego gracza!  ");
+            Button confirmButton = new Button("OK!", event -> {
+                 dialogAddedPlayer.close();
+                });
+            dialogAddedPlayer.add(messageOK, confirmButton);
+
+
+            Button buttonAdd = new Button("Dodaj gracza!", new Icon(VaadinIcon.THUMBS_UP));
+            buttonAdd.setIconAfterText(true);
+            buttonAdd.addClickListener(ClickEvent -> {
+               addPlayerMethod(textFieldName, integerFieldStartCash, textFieldPassword,
+                       comboBoxRole, passwordEncoder);
+               textFieldName.clear();
+               textFieldPassword.clear();
+               integerFieldStartCash.clear();
+               comboBoxRole.clear();
+               dialogAddedPlayer.open();
+            });
+
+            add(textFieldName, textFieldPassword, integerFieldStartCash, comboBoxRole, buttonAdd, progressBarSplitUI);
+
+        }
+
+    private void addPlayerMethod(TextField textFieldName, IntegerField integerFieldStartCash,
+                                 TextField textFieldPassword, ComboBox comboBoxRole,
+                                 PasswordEncoder passwordEncoder) {
+
         Player player = new Player();
-        player.setName(String.valueOf(textFieldName.getValue()));
+        player.setUsername(String.valueOf(textFieldName.getValue()));
         player.setCash(Integer.parseInt(String.valueOf(integerFieldStartCash.getValue())));
+        player.setPassword(passwordEncoder.encode(String.valueOf(textFieldPassword.getValue())));
+        player.setRole(String.valueOf("ROLE_" + comboBoxRole.getValue()));
         playerRepo.save(player);
     }
 
-}
+    }
+
+
+
