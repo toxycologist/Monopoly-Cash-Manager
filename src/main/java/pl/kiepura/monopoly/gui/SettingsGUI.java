@@ -13,12 +13,13 @@ import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.kiepura.monopoly.entity.Player;
 import pl.kiepura.monopoly.repo.PlayerRepo;
 
-
+@Getter
 @Route("settings")
 @PageTitle("Monopoly - Ustawienia")
 public class SettingsGUI extends VerticalLayout {
@@ -90,9 +91,7 @@ public class SettingsGUI extends VerticalLayout {
             dialogAddedPlayer.setCloseOnEsc(false);
             dialogAddedPlayer.setCloseOnOutsideClick(true);
             Span messageOK = new Span("Dodano nowego gracza!  ");
-            Button confirmButton = new Button("OK!", event -> {
-                 dialogAddedPlayer.close();
-                });
+            Button confirmButton = new Button("OK!", event -> dialogAddedPlayer.close());
             dialogAddedPlayer.add(messageOK, confirmButton);
 
 
@@ -120,7 +119,7 @@ public class SettingsGUI extends VerticalLayout {
         player.setUsername(String.valueOf(textFieldName.getValue()));
         player.setCash(Integer.parseInt(String.valueOf(integerFieldStartCash.getValue())));
         player.setPassword(passwordEncoder.encode(String.valueOf(textFieldPassword.getValue())));
-        player.setRole(String.valueOf("ROLE_" + comboBoxRole.getValue()));
+        player.setRole("ROLE_" + comboBoxRole.getValue());
         playerRepo.save(player);
     }
 

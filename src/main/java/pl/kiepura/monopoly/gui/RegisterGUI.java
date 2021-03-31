@@ -59,9 +59,7 @@ public class RegisterGUI extends VerticalLayout {
         dialogAddedPlayer.setCloseOnEsc(false);
         dialogAddedPlayer.setCloseOnOutsideClick(true);
         Span messageOK = new Span("Dodano nowego gracza!  ");
-        Button confirmButton = new Button("OK!", event -> {
-            dialogAddedPlayer.close();
-        });
+        Button confirmButton = new Button("OK!", event -> dialogAddedPlayer.close());
         dialogAddedPlayer.add(messageOK, confirmButton);
 
 
@@ -89,7 +87,7 @@ public class RegisterGUI extends VerticalLayout {
         player.setUsername(String.valueOf(textFieldName.getValue()));
         player.setCash(Integer.parseInt(String.valueOf(integerFieldStartCash.getValue())));
         player.setPassword(passwordEncoder.encode(String.valueOf(textFieldPassword.getValue())));
-        player.setRole(String.valueOf("ROLE_" + comboBoxRole.getValue()));
+        player.setRole("ROLE_" + comboBoxRole.getValue());
         playerRepo.save(player);
     }
 }

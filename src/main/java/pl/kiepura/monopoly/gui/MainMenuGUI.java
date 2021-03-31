@@ -11,6 +11,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import pl.kiepura.monopoly.entity.PlayerDto;
 import pl.kiepura.monopoly.repo.PlayerRepo;
 
@@ -25,11 +27,12 @@ public class MainMenuGUI extends VerticalLayout {
 
 
     public MainMenuGUI(PlayerRepo playerRepo) {
+        this.playerRepo = playerRepo;
 
         Image imageMonopoly = new Image("https://i.pinimg.com/originals/b0/b2/48/b0b248f91cefb344ec92b272eadd860b.png", "Monopoly");
         imageMonopoly.setHeight("90px");
         imageMonopoly.setWidth("300px");
-         
+
         Button buttonSettings = new Button("Ustawienia gry", new Icon(VaadinIcon.COGS));
         buttonSettings.addClickListener(event -> UI.getCurrent().getPage().setLocation("settings"));
 
@@ -42,7 +45,7 @@ public class MainMenuGUI extends VerticalLayout {
         ProgressBar progressBarSplit = new ProgressBar();
 
 
-        this.playerRepo = playerRepo;
+
         List<PlayerDto> playerList = playerRepo.getPlayers();
         Grid<PlayerDto> gridPlayers = new Grid<>(PlayerDto.class);
         gridPlayers.setItems(playerList);
