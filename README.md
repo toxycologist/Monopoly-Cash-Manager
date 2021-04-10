@@ -1,8 +1,8 @@
 # Monopoly Cash Manager
-Jest to aplikacja zastępująca stardardowe, mozolne liczenie papierowych pieniędzy na prostą aplikację obsługującą przelewy.
 
-Aplikacja obsługuje przelewy między graczami, jak i również z oraz do banku.
+It is a simple application, that can handle cash operations between players or/and a Bank.
+Everyone has it's own panel, that is protected by password set on the beggining of a play.
+Player One is also a Banker, max 4 players allwed.
 
-
-Dostępna jest pod adresem:
+Avalible at:
 https://monopoly-by-toxy.herokuapp.com/main-menu
