@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -14,6 +15,8 @@ import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import pl.kiepura.monopoly.entity.Player;
 import pl.kiepura.monopoly.repo.PlayerRepo;
 
@@ -23,51 +26,54 @@ import javax.transaction.Transactional;
 @Getter
 @Route("player-two")
 @PageTitle("Monopoly - Gracz #2")
+@RequiredArgsConstructor
 public class PlayerTwo extends VerticalLayout {
-    PlayerRepo playerRepo;
+
+
     private int howMuch;
+    private final PlayerRepo playerRepo;
 
 
+    @Autowired
+    public void PlayerTwoGUI() {
 
-
-    public PlayerTwo(PlayerRepo playerRepo) {
-        this.playerRepo = playerRepo;
+        Image imageMonopoly = new Image("https://i.pinimg.com/originals/b0/b2/48/b0b248f91cefb344ec92b272eadd860b.png", "Monopoly");
+        imageMonopoly.setHeight("90px");
+        imageMonopoly.setWidth("300px");
 
         Text textPlayerTwo = new Text("Gracz " + playerRepo.getPlayerTwo());
         Label labelCash = new Label("Posiadana gotówka: " + playerRepo.getPlayerTwoCash());
 
         IntegerField integerFieldHowMuch = new IntegerField("Ile chcesz przelać?");
+        integerFieldHowMuch.setMin(1);
 
 
         Dialog dialogSendMoney = new Dialog();
         Span whoSendMoney = new Span("Komu chcesz wysłać pieniądze?");
 
 
-        //gracz 1
+        // player 1
         Button buttonPlayerOne = new Button(playerRepo.getPlayerOne());
         buttonPlayerOne.addClickListener(ClickEvent -> {
             transferMoneyToPlayerOne(integerFieldHowMuch);
             integerFieldHowMuch.clear();
             dialogSendMoney.close();
-            UI.getCurrent().getPage().reload();
         });
 
-        // gracz 3
+        // player 3
         Button buttonPlayerThree = new Button(playerRepo.getPlayerThree());
         buttonPlayerThree.addClickListener(ClickEvent -> {
             transferMoneyToPlayerThree(integerFieldHowMuch);
             integerFieldHowMuch.clear();
             dialogSendMoney.close();
-            UI.getCurrent().getPage().reload();
         });
 
-        // gracz 4
+        // player 4
         Button buttonPlayerFour = new Button(playerRepo.getPlayerFour());
         buttonPlayerFour.addClickListener(ClickEvent -> {
             transferMoneyToPlayerFour(integerFieldHowMuch);
             integerFieldHowMuch.clear();
             dialogSendMoney.close();
-            UI.getCurrent().getPage().reload();
         });
 
         // bank
@@ -76,7 +82,6 @@ public class PlayerTwo extends VerticalLayout {
             transferMoneyToBank(integerFieldHowMuch);
             integerFieldHowMuch.clear();
             dialogSendMoney.close();
-            UI.getCurrent().getPage().reload();
         });
 
         ProgressBar progressBarSplitUIDialog = new ProgressBar();
@@ -98,53 +103,88 @@ public class PlayerTwo extends VerticalLayout {
         buttonSendMoney.addClickListener(ClickEvent -> dialogSendMoney.open());
 
 
-        add(textPlayerTwo, labelCash, integerFieldHowMuch, buttonSendMoney, buttonMainMenu, dialogSendMoney);
+        add(imageMonopoly, textPlayerTwo, labelCash, integerFieldHowMuch, buttonSendMoney, buttonMainMenu, dialogSendMoney);
     }
+
+    private void dialogWarning() {
+        Dialog dialogWarning = new Dialog();
+        Text textWarning = new Text("Nie możesz wysłać przelewu mniejszego niż 0!!");
+        dialogWarning.add(textWarning);
+        add(dialogWarning);
+        dialogWarning.open();
+    }
+
+
+    // PLAYER TRANSACTIONS
 
     @Transactional
     private void transferMoneyToBank(IntegerField integerFieldHowMuch) {
         howMuch = Integer.parseInt(String.valueOf(integerFieldHowMuch.getValue()));
-        Player sourcePlayer = playerRepo.getById(2L);
-        sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
 
-        playerRepo.save(sourcePlayer);
+        if (howMuch < 1) {
+            dialogWarning();
+        } else {
+            Player sourcePlayer = playerRepo.getById(2L);
+            sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
+
+            playerRepo.save(sourcePlayer);
+            UI.getCurrent().getPage().reload();
+        }
     }
 
     @Transactional
     private void transferMoneyToPlayerOne(IntegerField integerFieldHowMuch) {
         howMuch = Integer.parseInt(String.valueOf(integerFieldHowMuch.getValue()));
-        Player sourcePlayer = playerRepo.getById(2L);
-        sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
-        Player targetPlayer = playerRepo.getById(1L);
-        targetPlayer.setCash(targetPlayer.getCash() + howMuch);
 
-        playerRepo.save(sourcePlayer);
-        playerRepo.save(targetPlayer);
+        if (howMuch < 1) {
+            dialogWarning();
+        } else {
+            Player sourcePlayer = playerRepo.getById(2L);
+            sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
+            Player targetPlayer = playerRepo.getById(1L);
+            targetPlayer.setCash(targetPlayer.getCash() + howMuch);
+
+            playerRepo.save(sourcePlayer);
+            playerRepo.save(targetPlayer);
+            UI.getCurrent().getPage().reload();
+        }
     }
 
 
     @Transactional
     private void transferMoneyToPlayerThree(IntegerField integerFieldHowMuch) {
         howMuch = Integer.parseInt(String.valueOf(integerFieldHowMuch.getValue()));
-        Player sourcePlayer = playerRepo.getById(2L);
-        sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
-        Player targetPlayer = playerRepo.getById(3L);
-        targetPlayer.setCash(targetPlayer.getCash() + howMuch);
 
-        playerRepo.save(sourcePlayer);
-        playerRepo.save(targetPlayer);
+        if (howMuch < 1) {
+            dialogWarning();
+        } else {
+            Player sourcePlayer = playerRepo.getById(2L);
+            sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
+            Player targetPlayer = playerRepo.getById(3L);
+            targetPlayer.setCash(targetPlayer.getCash() + howMuch);
+
+            playerRepo.save(sourcePlayer);
+            playerRepo.save(targetPlayer);
+            UI.getCurrent().getPage().reload();
+        }
     }
 
     @Transactional
     private void transferMoneyToPlayerFour(IntegerField integerFieldHowMuch) {
         howMuch = Integer.parseInt(String.valueOf(integerFieldHowMuch.getValue()));
-        Player sourcePlayer = playerRepo.getById(2L);
-        sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
-        Player targetPlayer = playerRepo.getById(4L);
-        targetPlayer.setCash(targetPlayer.getCash() + howMuch);
 
-        playerRepo.save(sourcePlayer);
-        playerRepo.save(targetPlayer);
+        if (howMuch < 1) {
+            dialogWarning();
+        } else {
+            Player sourcePlayer = playerRepo.getById(2L);
+            sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
+            Player targetPlayer = playerRepo.getById(4L);
+            targetPlayer.setCash(targetPlayer.getCash() + howMuch);
+
+            playerRepo.save(sourcePlayer);
+            playerRepo.save(targetPlayer);
+            UI.getCurrent().getPage().reload();
+        }
     }
 
 
