@@ -14,6 +14,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.kiepura.monopoly.entity.Player;
@@ -22,21 +23,19 @@ import pl.kiepura.monopoly.repo.PlayerRepo;
 @Getter
 @Route("settings")
 @PageTitle("Monopoly - Ustawienia")
+@RequiredArgsConstructor
 public class SettingsGUI extends VerticalLayout {
 
-    PlayerRepo playerRepo;
+    private final PlayerRepo playerRepo;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Autowired
-    public void init(PlayerRepo playerRepo, PasswordEncoder passwordEncoder) {
-        this.playerRepo = playerRepo;
-
-               addPlayer(passwordEncoder);
-               mainMenu();
-               deletePlayers();
-
+    public void init() {
+        addPlayer(passwordEncoder);
+        mainMenu();
+        deletePlayers();
     }
-
 
 
     private void deletePlayers() {
@@ -78,38 +77,38 @@ public class SettingsGUI extends VerticalLayout {
     }
 
     private void addPlayer(PasswordEncoder passwordEncoder) {
-            ProgressBar progressBarSplitUI = new ProgressBar();
-            TextField textFieldName = new TextField("Wpisz imię (login) :");
-            TextField textFieldPassword = new TextField("Wpisz hasło:");
-            IntegerField integerFieldStartCash = new IntegerField("Wpisz gotówkę początkową");
-            integerFieldStartCash.setWidth("200px");
-            ComboBox comboBoxRole = new ComboBox("Wybierz rolę gracza");
-            comboBoxRole.setItems("Gracz 1 + Bank", "Gracz 2", "Gracz 3", "Gracz 4");
+        ProgressBar progressBarSplitUI = new ProgressBar();
+        TextField textFieldName = new TextField("Wpisz imię (login) :");
+        TextField textFieldPassword = new TextField("Wpisz hasło:");
+        IntegerField integerFieldStartCash = new IntegerField("Wpisz gotówkę początkową");
+        integerFieldStartCash.setWidth("200px");
+        ComboBox comboBoxRole = new ComboBox("Wybierz rolę gracza");
+        comboBoxRole.setItems("Gracz 1 + Bank", "Gracz 2", "Gracz 3", "Gracz 4");
 
 
-            Dialog dialogAddedPlayer = new Dialog();
-            dialogAddedPlayer.setCloseOnEsc(false);
-            dialogAddedPlayer.setCloseOnOutsideClick(true);
-            Span messageOK = new Span("Dodano nowego gracza!  ");
-            Button confirmButton = new Button("OK!", event -> dialogAddedPlayer.close());
-            dialogAddedPlayer.add(messageOK, confirmButton);
+        Dialog dialogAddedPlayer = new Dialog();
+        dialogAddedPlayer.setCloseOnEsc(false);
+        dialogAddedPlayer.setCloseOnOutsideClick(true);
+        Span messageOK = new Span("Dodano nowego gracza!  ");
+        Button confirmButton = new Button("OK!", event -> dialogAddedPlayer.close());
+        dialogAddedPlayer.add(messageOK, confirmButton);
 
 
-            Button buttonAdd = new Button("Dodaj gracza!", new Icon(VaadinIcon.THUMBS_UP));
-            buttonAdd.setIconAfterText(true);
-            buttonAdd.addClickListener(ClickEvent -> {
-               addPlayerMethod(textFieldName, integerFieldStartCash, textFieldPassword,
-                       comboBoxRole, passwordEncoder);
-               textFieldName.clear();
-               textFieldPassword.clear();
-               integerFieldStartCash.clear();
-               comboBoxRole.clear();
-               dialogAddedPlayer.open();
-            });
+        Button buttonAdd = new Button("Dodaj gracza!", new Icon(VaadinIcon.THUMBS_UP));
+        buttonAdd.setIconAfterText(true);
+        buttonAdd.addClickListener(ClickEvent -> {
+            addPlayerMethod(textFieldName, integerFieldStartCash, textFieldPassword,
+                    comboBoxRole, passwordEncoder);
+            textFieldName.clear();
+            textFieldPassword.clear();
+            integerFieldStartCash.clear();
+            comboBoxRole.clear();
+            dialogAddedPlayer.open();
+        });
 
-            add(textFieldName, textFieldPassword, integerFieldStartCash, comboBoxRole, buttonAdd, progressBarSplitUI);
+        add(textFieldName, textFieldPassword, integerFieldStartCash, comboBoxRole, buttonAdd, progressBarSplitUI);
 
-        }
+    }
 
     private void addPlayerMethod(TextField textFieldName, IntegerField integerFieldStartCash,
                                  TextField textFieldPassword, ComboBox comboBoxRole,
@@ -123,7 +122,7 @@ public class SettingsGUI extends VerticalLayout {
         playerRepo.save(player);
     }
 
-    }
+}
 
 
 

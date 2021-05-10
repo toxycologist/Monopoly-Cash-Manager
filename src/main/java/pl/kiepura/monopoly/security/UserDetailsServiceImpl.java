@@ -10,14 +10,12 @@ import pl.kiepura.monopoly.repo.PlayerRepo;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private PlayerRepo playerRepo;
-
+    private final PlayerRepo playerRepo;
 
 
     public UserDetailsServiceImpl(PlayerRepo playerRepo) {
         this.playerRepo = playerRepo;
     }
-
 
 
     @Override

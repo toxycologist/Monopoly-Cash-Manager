@@ -21,14 +21,13 @@ import java.util.List;
 
 @Route("main-menu")
 @PageTitle("Monopoly - Menu Główne")
+@RequiredArgsConstructor
 public class MainMenuGUI extends VerticalLayout {
 
-    private final PlayerRepo playerRepo;
+private final PlayerRepo playerRepo;
 
-
-    public MainMenuGUI(PlayerRepo playerRepo) {
-        this.playerRepo = playerRepo;
-
+    @Autowired
+    public void MainMenuGUIs() {
         Image imageMonopoly = new Image("https://i.pinimg.com/originals/b0/b2/48/b0b248f91cefb344ec92b272eadd860b.png", "Monopoly");
         imageMonopoly.setHeight("90px");
         imageMonopoly.setWidth("300px");
@@ -39,11 +38,7 @@ public class MainMenuGUI extends VerticalLayout {
         Button buttonLogout = new Button("Wyloguj się!", new Icon(VaadinIcon.UNLINK));
         buttonLogout.addClickListener(event -> UI.getCurrent().getPage().setLocation("/logout"));
 
-        Button buttonRegister = new Button("Zarejestruj gracza!", new Icon(VaadinIcon.PLUS));
-        buttonRegister.addClickListener(event -> UI.getCurrent().getPage().setLocation("register"));
-
         ProgressBar progressBarSplit = new ProgressBar();
-
 
 
         List<PlayerDto> playerList = playerRepo.getPlayers();
@@ -71,7 +66,7 @@ public class MainMenuGUI extends VerticalLayout {
 
         buttonPlayerFour.addClickListener(event -> UI.getCurrent().getPage().setLocation("player-four"));
 
-        add(imageMonopoly, buttonSettings, buttonRegister, gridPlayers,
+        add(imageMonopoly, buttonSettings, gridPlayers,
                 buttonPlayerOne, buttonPlayerTwo, buttonPlayerThree, buttonPlayerFour, progressBarSplit, buttonLogout);
     }
 

@@ -67,4 +67,5 @@ public class Player implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
