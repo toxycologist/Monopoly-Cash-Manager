@@ -14,7 +14,7 @@ import com.vaadin.flow.router.Route;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.kiepura.monopoly.entity.PlayerDto;
-import pl.kiepura.monopoly.repo.PlayerRepo;
+import pl.kiepura.monopoly.manager.PlayerManager;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MainMenuGUI extends VerticalLayout {
 
-private final PlayerRepo playerRepo;
+    private final PlayerManager playerManager;
 
     @Autowired
     public void MainMenuGUIs() {
@@ -41,7 +41,7 @@ private final PlayerRepo playerRepo;
         ProgressBar progressBarSplit = new ProgressBar();
 
 
-        List<PlayerDto> playerList = playerRepo.getPlayers();
+        List<PlayerDto> playerList = playerManager.getPlayers();
         Grid<PlayerDto> gridPlayers = new Grid<>(PlayerDto.class);
         gridPlayers.setItems(playerList);
         gridPlayers.removeAllColumns();
@@ -51,11 +51,10 @@ private final PlayerRepo playerRepo;
         gridPlayers.setHeightByRows(true);
 
 
-        Button buttonPlayerOne = new Button("Panel gracza " + playerRepo.getPlayerOne() + " [Bankier]", new Icon(VaadinIcon.USER));
-        Button buttonPlayerTwo = new Button("Panel gracza " + playerRepo.getPlayerTwo(), new Icon(VaadinIcon.USER));
-        Button buttonPlayerThree = new Button("Panel gracza " + playerRepo.getPlayerThree(), new Icon(VaadinIcon.USER));
-        Button buttonPlayerFour = new Button("Panel gracza " + playerRepo.getPlayerFour(), new Icon(VaadinIcon.USER));
-
+        Button buttonPlayerOne = new Button("Panel gracza " + playerManager.getPlayerOne() + " [Bankier]", new Icon(VaadinIcon.USER));
+        Button buttonPlayerTwo = new Button("Panel gracza " + playerManager.getPlayerTwo(), new Icon(VaadinIcon.USER));
+        Button buttonPlayerThree = new Button("Panel gracza " + playerManager.getPlayerThree(), new Icon(VaadinIcon.USER));
+        Button buttonPlayerFour = new Button("Panel gracza " + playerManager.getPlayerFour(), new Icon(VaadinIcon.USER));
 
 
         buttonPlayerOne.addClickListener(event -> UI.getCurrent().getPage().setLocation("player-one"));

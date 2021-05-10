@@ -9,5 +9,4 @@ public interface PlayerDto {
     Integer getCash();
 
 
-
 }

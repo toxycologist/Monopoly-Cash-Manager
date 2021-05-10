@@ -17,7 +17,8 @@ import com.vaadin.flow.router.Route;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.kiepura.monopoly.entity.Player;
-import pl.kiepura.monopoly.repo.PlayerRepo;
+import pl.kiepura.monopoly.manager.PlayerManager;
+
 
 import javax.transaction.Transactional;
 
@@ -27,9 +28,8 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class PlayerFour extends VerticalLayout {
 
+    private final PlayerManager playerManager;
     private int howMuch;
-    private final PlayerRepo playerRepo;
-
 
     @Autowired
     public void PlayerFourGUI() {
@@ -37,8 +37,8 @@ public class PlayerFour extends VerticalLayout {
         imageMonopoly.setHeight("90px");
         imageMonopoly.setWidth("300px");
 
-        Text textPlayerFour = new Text("Gracz " + playerRepo.getPlayerFour());
-        Label labelCash = new Label("Posiadana gotówka: " + playerRepo.getPlayerFourCash());
+        Text textPlayerFour = new Text("Gracz " + playerManager.getPlayerFour());
+        Label labelCash = new Label("Posiadana gotówka: " + playerManager.getPlayerFourCash());
 
         IntegerField integerFieldHowMuch = new IntegerField("Ile chcesz przelać?");
         integerFieldHowMuch.setMin(1);
@@ -49,7 +49,7 @@ public class PlayerFour extends VerticalLayout {
 
 
         // player 1
-        Button buttonPlayerOne = new Button(playerRepo.getPlayerOne());
+        Button buttonPlayerOne = new Button(playerManager.getPlayerOne());
         buttonPlayerOne.addClickListener(ClickEvent -> {
             transferMoneyToPlayerOne(integerFieldHowMuch);
             integerFieldHowMuch.clear();
@@ -57,7 +57,7 @@ public class PlayerFour extends VerticalLayout {
         });
 
         // player 2
-        Button buttonPlayerTwo = new Button(playerRepo.getPlayerTwo());
+        Button buttonPlayerTwo = new Button(playerManager.getPlayerTwo());
         buttonPlayerTwo.addClickListener(ClickEvent -> {
             transferMoneyToPlayerTwo(integerFieldHowMuch);
             integerFieldHowMuch.clear();
@@ -65,7 +65,7 @@ public class PlayerFour extends VerticalLayout {
         });
 
         // player 3
-        Button buttonPlayerThree = new Button(playerRepo.getPlayerThree());
+        Button buttonPlayerThree = new Button(playerManager.getPlayerThree());
         buttonPlayerThree.addClickListener(ClickEvent -> {
             transferMoneyToPlayerThree(integerFieldHowMuch);
             integerFieldHowMuch.clear();
@@ -120,10 +120,10 @@ public class PlayerFour extends VerticalLayout {
         if (howMuch < 1) {
             dialogWarning();
         } else {
-            Player sourcePlayer = playerRepo.getById(4L);
+            Player sourcePlayer = playerManager.getById(4L);
             sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
 
-            playerRepo.save(sourcePlayer);
+            playerManager.save(sourcePlayer);
             UI.getCurrent().getPage().reload();
         }
     }
@@ -135,13 +135,13 @@ public class PlayerFour extends VerticalLayout {
         if (howMuch < 1) {
             dialogWarning();
         } else {
-            Player sourcePlayer = playerRepo.getById(4L);
+            Player sourcePlayer = playerManager.getById(4L);
             sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
-            Player targetPlayer = playerRepo.getById(1L);
+            Player targetPlayer = playerManager.getById(1L);
             targetPlayer.setCash(targetPlayer.getCash() + howMuch);
 
-            playerRepo.save(sourcePlayer);
-            playerRepo.save(targetPlayer);
+            playerManager.save(sourcePlayer);
+            playerManager.save(targetPlayer);
             UI.getCurrent().getPage().reload();
         }
     }
@@ -154,13 +154,13 @@ public class PlayerFour extends VerticalLayout {
         if (howMuch < 1) {
             dialogWarning();
         } else {
-            Player sourcePlayer = playerRepo.getById(4L);
+            Player sourcePlayer = playerManager.getById(4L);
             sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
-            Player targetPlayer = playerRepo.getById(2L);
+            Player targetPlayer = playerManager.getById(2L);
             targetPlayer.setCash(targetPlayer.getCash() + howMuch);
 
-            playerRepo.save(sourcePlayer);
-            playerRepo.save(targetPlayer);
+            playerManager.save(sourcePlayer);
+            playerManager.save(targetPlayer);
             UI.getCurrent().getPage().reload();
         }
     }
@@ -172,13 +172,13 @@ public class PlayerFour extends VerticalLayout {
         if (howMuch < 1) {
             dialogWarning();
         } else {
-            Player sourcePlayer = playerRepo.getById(4L);
+            Player sourcePlayer = playerManager.getById(4L);
             sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
-            Player targetPlayer = playerRepo.getById(3L);
+            Player targetPlayer = playerManager.getById(3L);
             targetPlayer.setCash(targetPlayer.getCash() + howMuch);
 
-            playerRepo.save(sourcePlayer);
-            playerRepo.save(targetPlayer);
+            playerManager.save(sourcePlayer);
+            playerManager.save(targetPlayer);
             UI.getCurrent().getPage().reload();
         }
     }

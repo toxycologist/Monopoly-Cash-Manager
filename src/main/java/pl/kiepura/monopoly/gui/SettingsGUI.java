@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.kiepura.monopoly.entity.Player;
-import pl.kiepura.monopoly.repo.PlayerRepo;
+import pl.kiepura.monopoly.manager.PlayerManager;
 
 @Getter
 @Route("settings")
@@ -26,7 +26,7 @@ import pl.kiepura.monopoly.repo.PlayerRepo;
 @RequiredArgsConstructor
 public class SettingsGUI extends VerticalLayout {
 
-    private final PlayerRepo playerRepo;
+    private final PlayerManager playerManager;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -59,7 +59,7 @@ public class SettingsGUI extends VerticalLayout {
         buttonCancelDeleting.addClickListener(ClickEvent -> dialogDeleteAllPlayerConfirmation.close());
 
         buttonConfirmDeleteAllPlayers.addClickListener(ClickEvent -> {
-            playerRepo.clearPlayers();
+            playerManager.clearPlayers();
             dialogDeleteAllPlayerConfirmation.close();
         });
 
@@ -119,7 +119,7 @@ public class SettingsGUI extends VerticalLayout {
         player.setCash(Integer.parseInt(String.valueOf(integerFieldStartCash.getValue())));
         player.setPassword(passwordEncoder.encode(String.valueOf(textFieldPassword.getValue())));
         player.setRole("ROLE_" + comboBoxRole.getValue());
-        playerRepo.save(player);
+        playerManager.save(player);
     }
 
 }

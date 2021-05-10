@@ -39,9 +39,11 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/player-two").hasRole("Gracz 2")
                 .antMatchers("/player-three").hasRole("Gracz 3")
                 .antMatchers("/player-four").hasRole("Gracz 4")
-                .antMatchers("/settings").hasRole("ADMIN")
+                .antMatchers("/settings").hasRole("Gracz 1 + Bank")
                 .and()
-                .formLogin().successForwardUrl("/main-menu");
+                .formLogin().successForwardUrl("/main-menu")
+                .and()
+                .logout().logoutSuccessUrl("/main-menu");
 
     }
 
@@ -54,7 +56,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .password(passwordEncoder.encode("1q2w3e4r"))
                 .roles("ADMIN")
                 .build();
-
 
         return new InMemoryUserDetailsManager(admin);
 
