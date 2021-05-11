@@ -126,7 +126,7 @@ public class PlayerThree extends VerticalLayout {
         gridHistory.removeAllColumns();
         gridHistory.setWidth("350px");
         gridHistory.setHeight("300px");
-        gridHistory.setVisible(true);
+        gridHistory.setVisible(false);
         gridHistory.addColumn(TransactionHistoryDto::getId).setHeader("#").setAutoWidth(true);
         gridHistory.addColumn(TransactionHistoryDto::getSource).setHeader("Kto?").setAutoWidth(true);
         gridHistory.addColumn(TransactionHistoryDto::getAmount).setHeader("Ile?").setAutoWidth(true);
