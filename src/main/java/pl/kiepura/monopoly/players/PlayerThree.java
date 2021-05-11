@@ -4,6 +4,8 @@ import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
@@ -17,9 +19,13 @@ import com.vaadin.flow.router.Route;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.kiepura.monopoly.entity.Player;
+import pl.kiepura.monopoly.entity.TransactionHistory;
+import pl.kiepura.monopoly.entity.TransactionHistoryDto;
 import pl.kiepura.monopoly.manager.PlayerManager;
+import pl.kiepura.monopoly.manager.TransactionHistoryManager;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 
 @Route("player-three")
@@ -28,6 +34,8 @@ import javax.transaction.Transactional;
 public class PlayerThree extends VerticalLayout {
 
     private final PlayerManager playerManager;
+    private final TransactionHistoryManager transactionHistoryManager;
+    TransactionHistory transactionHistory = new TransactionHistory();
     private int howMuch;
 
     @Autowired
@@ -100,6 +108,7 @@ public class PlayerThree extends VerticalLayout {
 
 
         add(imageMonopoly, textPlayerThree, labelCash, integerFieldHowMuch, buttonSendMoney, buttonMainMenu, dialogSendMoney);
+        transactionHistory();
     }
 
     private void dialogWarning() {
@@ -108,6 +117,32 @@ public class PlayerThree extends VerticalLayout {
         dialogWarning.add(textWarning);
         add(dialogWarning);
         dialogWarning.open();
+    }
+
+    private void transactionHistory() {
+        List<TransactionHistoryDto> transactionHistoryDtoList = transactionHistoryManager.getTransactions();
+        Grid<TransactionHistoryDto> gridHistory = new Grid<>(TransactionHistoryDto.class);
+        gridHistory.setItems(transactionHistoryDtoList);
+        gridHistory.removeAllColumns();
+        gridHistory.setWidth("350px");
+        gridHistory.setHeight("300px");
+        gridHistory.setVisible(true);
+        gridHistory.addColumn(TransactionHistoryDto::getId).setHeader("#").setAutoWidth(true);
+        gridHistory.addColumn(TransactionHistoryDto::getSource).setHeader("Kto?").setAutoWidth(true);
+        gridHistory.addColumn(TransactionHistoryDto::getAmount).setHeader("Ile?").setAutoWidth(true);
+        gridHistory.addColumn(TransactionHistoryDto::getTarget).setHeader("Komu?").setAutoWidth(true);
+        gridHistory.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+        gridHistory.setHeightByRows(true);
+
+
+        Button buttonShowGrid = new Button("Pokaż/ukryj historię transakcji.", new Icon(VaadinIcon.SCALE));
+        buttonShowGrid.setWidth("290px");
+        buttonShowGrid.setIconAfterText(true);
+        buttonShowGrid.addClickListener(ClickEvent ->
+                gridHistory.setVisible(!gridHistory.isVisible()));
+
+
+        add(buttonShowGrid, gridHistory);
     }
 
     // PLAYER TRANSACTIONS
@@ -121,6 +156,11 @@ public class PlayerThree extends VerticalLayout {
         } else {
             Player sourcePlayer = playerManager.getById(3L);
             sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
+
+            transactionHistory.setSource(playerManager.getPlayerThree());
+            transactionHistory.setTarget("Bank");
+            transactionHistory.setAmount(howMuch);
+            transactionHistoryManager.save(transactionHistory);
 
             playerManager.save(sourcePlayer);
             UI.getCurrent().getPage().reload();
@@ -138,6 +178,11 @@ public class PlayerThree extends VerticalLayout {
             sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
             Player targetPlayer = playerManager.getById(1L);
             targetPlayer.setCash(targetPlayer.getCash() + howMuch);
+
+            transactionHistory.setSource(playerManager.getPlayerThree());
+            transactionHistory.setTarget(playerManager.getPlayerOne());
+            transactionHistory.setAmount(howMuch);
+            transactionHistoryManager.save(transactionHistory);
 
             playerManager.save(sourcePlayer);
             playerManager.save(targetPlayer);
@@ -158,6 +203,11 @@ public class PlayerThree extends VerticalLayout {
             Player targetPlayer = playerManager.getById(2L);
             targetPlayer.setCash(targetPlayer.getCash() + howMuch);
 
+            transactionHistory.setSource(playerManager.getPlayerThree());
+            transactionHistory.setTarget(playerManager.getPlayerTwo());
+            transactionHistory.setAmount(howMuch);
+            transactionHistoryManager.save(transactionHistory);
+
             playerManager.save(sourcePlayer);
             playerManager.save(targetPlayer);
             UI.getCurrent().getPage().reload();
@@ -175,6 +225,11 @@ public class PlayerThree extends VerticalLayout {
             sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
             Player targetPlayer = playerManager.getById(4L);
             targetPlayer.setCash(targetPlayer.getCash() + howMuch);
+
+            transactionHistory.setSource(playerManager.getPlayerThree());
+            transactionHistory.setTarget(playerManager.getPlayerFour());
+            transactionHistory.setAmount(howMuch);
+            transactionHistoryManager.save(transactionHistory);
 
             playerManager.save(sourcePlayer);
             playerManager.save(targetPlayer);

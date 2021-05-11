@@ -2,9 +2,12 @@ package pl.kiepura.monopoly.entity;
 
 public interface TransactionHistoryDto {
 
-    Long getTranactionId();
+    Long getId();
+
     String getSource();
+
     String getTarget();
+
     Integer getAmount();
 
 
