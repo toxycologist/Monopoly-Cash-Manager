@@ -25,4 +25,8 @@ public class TransactionHistoryManager {
     public List<TransactionHistoryDto> getTransactions() {
         return transactionHistoryRepo.getTransactions();
     }
+
+    public void clearHistory() {
+        transactionHistoryRepo.clearHistory();
+    }
 }
