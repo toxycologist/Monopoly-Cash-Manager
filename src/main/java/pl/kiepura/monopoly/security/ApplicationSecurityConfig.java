@@ -39,7 +39,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/player-two").hasRole("Gracz 2")
                 .antMatchers("/player-three").hasRole("Gracz 3")
                 .antMatchers("/player-four").hasRole("Gracz 4")
-                .antMatchers("/settings").hasRole("Gracz 1 + Bank")
+                .antMatchers("/settings").permitAll()
                 .and()
                 .formLogin().successForwardUrl("/main-menu")
                 .and()
