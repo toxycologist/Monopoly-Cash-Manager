@@ -17,8 +17,8 @@ import com.vaadin.flow.router.Route;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.kiepura.monopoly.entity.Player;
+import pl.kiepura.monopoly.entity.Transfer;
 import pl.kiepura.monopoly.manager.PlayerManager;
-import pl.kiepura.monopoly.repo.PlayerRepo;
 
 import javax.transaction.Transactional;
 
@@ -30,6 +30,7 @@ public class PlayerOne extends VerticalLayout {
 
     private final PlayerManager playerManager;
     private int howMuch;
+    Transfer transfer;
 
     @Autowired
     public void PlayerOneGUI() {
@@ -213,6 +214,11 @@ public class PlayerOne extends VerticalLayout {
             sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
             Player targetPlayer = playerManager.getById(2L);
             targetPlayer.setCash(targetPlayer.getCash() + howMuch);
+
+            // todo: ostatni przelew ficzer
+
+            transfer.setHowMuchTransfer(howMuch);
+            System.out.println(transfer.getHowMuchTransfer());
 
             playerManager.save(sourcePlayer);
             playerManager.save(targetPlayer);

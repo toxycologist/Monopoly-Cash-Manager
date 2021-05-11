@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import pl.kiepura.monopoly.manager.PlayerManager;
-import pl.kiepura.monopoly.repo.PlayerRepo;
 
 
 @Service

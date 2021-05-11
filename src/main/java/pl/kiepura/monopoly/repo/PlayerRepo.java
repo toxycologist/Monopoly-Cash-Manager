@@ -27,9 +27,6 @@ public interface PlayerRepo extends CrudRepository<Player, Long> {
     List<PlayerDto> getPlayers();
 
 
-/*    @Query(value = "SELECT username as username FROM player", nativeQuery = true)
-    List<PlayerDto> getPlayersNames();*/
-
 
     // player 1
 

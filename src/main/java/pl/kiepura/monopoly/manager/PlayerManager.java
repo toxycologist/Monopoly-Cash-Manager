@@ -27,11 +27,11 @@ public class PlayerManager {
     }
 
 
-    public Player getById(Long id){
+    public Player getById(Long id) {
         return playerRepo.getById(id);
     }
 
-    public Player save(Player player){
+    public Player save(Player player) {
         return playerRepo.save(player);
     }
 

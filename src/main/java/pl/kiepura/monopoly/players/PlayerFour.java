@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pl.kiepura.monopoly.entity.Player;
 import pl.kiepura.monopoly.manager.PlayerManager;
 
-
 import javax.transaction.Transactional;
 
 
@@ -30,6 +29,7 @@ public class PlayerFour extends VerticalLayout {
 
     private final PlayerManager playerManager;
     private int howMuch;
+
 
     @Autowired
     public void PlayerFourGUI() {
