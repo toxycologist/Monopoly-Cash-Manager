@@ -18,7 +18,6 @@ public interface PlayerRepo extends CrudRepository<Player, Long> {
     Player findByUsername(String username);
 
 
-
     @Transactional
     @Modifying
     @Query(value = "TRUNCATE TABLE player", nativeQuery = true)
@@ -26,10 +25,6 @@ public interface PlayerRepo extends CrudRepository<Player, Long> {
 
     @Query(value = "SELECT username as username, cash as cash FROM player WHERE (id BETWEEN 1 AND 4)", nativeQuery = true)
     List<PlayerDto> getPlayers();
-
-
-    @Query(value = "SELECT username as username FROM player", nativeQuery = true)
-    List<PlayerDto> getPlayersNames();
 
 
     // player 1

@@ -4,6 +4,8 @@ import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
@@ -17,9 +19,13 @@ import com.vaadin.flow.router.Route;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.kiepura.monopoly.entity.Player;
-import pl.kiepura.monopoly.repo.PlayerRepo;
+import pl.kiepura.monopoly.entity.TransactionHistory;
+import pl.kiepura.monopoly.entity.TransactionHistoryDto;
+import pl.kiepura.monopoly.manager.PlayerManager;
+import pl.kiepura.monopoly.manager.TransactionHistoryManager;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 
 @Route(value = "player-one")
@@ -27,9 +33,10 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class PlayerOne extends VerticalLayout {
 
+    private final PlayerManager playerManager;
+    private final TransactionHistoryManager transactionHistoryManager;
+    TransactionHistory transactionHistory = new TransactionHistory();
     private int howMuch;
-    private final PlayerRepo playerRepo;
-
 
     @Autowired
     public void PlayerOneGUI() {
@@ -38,8 +45,8 @@ public class PlayerOne extends VerticalLayout {
         imageMonopoly.setHeight("90px");
         imageMonopoly.setWidth("300px");
 
-        Text textPlayerOne = new Text("Gracz " + playerRepo.getPlayerOne());
-        Label labelCash = new Label("Posiadana gotówka: " + playerRepo.getPlayerOneCash());
+        Text textPlayerOne = new Text("Gracz " + playerManager.getPlayerOne());
+        Label labelCash = new Label("Posiadana gotówka: " + playerManager.getPlayerOneCash());
         IntegerField integerFieldHowMuch = new IntegerField("Ile chcesz przelać?");
         integerFieldHowMuch.setMin(1);
 
@@ -49,7 +56,7 @@ public class PlayerOne extends VerticalLayout {
 
 
         // player 2
-        Button buttonPlayerTwo = new Button(playerRepo.getPlayerTwo());
+        Button buttonPlayerTwo = new Button(playerManager.getPlayerTwo());
         buttonPlayerTwo.addClickListener(ClickEvent -> {
             transferMoneyToPlayerTwo(integerFieldHowMuch);
             integerFieldHowMuch.clear();
@@ -59,7 +66,7 @@ public class PlayerOne extends VerticalLayout {
         });
 
         // player 3
-        Button buttonPlayerThree = new Button(playerRepo.getPlayerThree());
+        Button buttonPlayerThree = new Button(playerManager.getPlayerThree());
         buttonPlayerThree.addClickListener(ClickEvent -> {
             transferMoneyToPlayerThree(integerFieldHowMuch);
             integerFieldHowMuch.clear();
@@ -68,7 +75,7 @@ public class PlayerOne extends VerticalLayout {
         });
 
         // player 4
-        Button buttonPlayerFour = new Button(playerRepo.getPlayerFour());
+        Button buttonPlayerFour = new Button(playerManager.getPlayerFour());
         buttonPlayerFour.addClickListener(ClickEvent -> {
             transferMoneyToPlayerFour(integerFieldHowMuch);
             integerFieldHowMuch.clear();
@@ -126,7 +133,7 @@ public class PlayerOne extends VerticalLayout {
 
         // player 1
 
-        Button buttonPlayerOneBank = new Button(playerRepo.getPlayerOne());
+        Button buttonPlayerOneBank = new Button(playerManager.getPlayerOne());
         buttonPlayerOneBank.addClickListener(ClickEvent -> {
             transferMoneyFromBankToPlayerOne(integerFieldHowMuchFromBank);
             integerFieldHowMuchFromBank.clear();
@@ -136,7 +143,7 @@ public class PlayerOne extends VerticalLayout {
 
         // player 2
 
-        Button buttonPlayerTwoBank = new Button(playerRepo.getPlayerTwo());
+        Button buttonPlayerTwoBank = new Button(playerManager.getPlayerTwo());
         buttonPlayerTwoBank.addClickListener(ClickEvent -> {
             transferMoneyFromBankToPlayerTwo(integerFieldHowMuchFromBank);
             integerFieldHowMuchFromBank.clear();
@@ -147,7 +154,7 @@ public class PlayerOne extends VerticalLayout {
 
         // player 3
 
-        Button buttonPlayerThreeBank = new Button(playerRepo.getPlayerThree());
+        Button buttonPlayerThreeBank = new Button(playerManager.getPlayerThree());
         buttonPlayerThreeBank.addClickListener(ClickEvent -> {
             transferMoneyFromBankToPlayerThree(integerFieldHowMuchFromBank);
             integerFieldHowMuchFromBank.clear();
@@ -158,7 +165,7 @@ public class PlayerOne extends VerticalLayout {
 
         // player 4
 
-        Button buttonPlayerFourBank = new Button(playerRepo.getPlayerFour());
+        Button buttonPlayerFourBank = new Button(playerManager.getPlayerFour());
         buttonPlayerFourBank.addClickListener(ClickEvent -> {
             transferMoneyFromBankToPlayerFour(integerFieldHowMuchFromBank);
             integerFieldHowMuchFromBank.clear();
@@ -174,6 +181,7 @@ public class PlayerOne extends VerticalLayout {
 
         add(imageMonopoly, textPlayerOne, labelCash, integerFieldHowMuch, buttonSendMoney, buttonMainMenu, dialogSendMoney, progressBarSplitUI, integerFieldHowMuchFromBank, buttonBank);
 
+        transactionHistory();
     }
 
     private void dialogWarning() {
@@ -182,6 +190,33 @@ public class PlayerOne extends VerticalLayout {
         dialogWarning.add(textWarning);
         add(dialogWarning);
         dialogWarning.open();
+    }
+
+
+    private void transactionHistory() {
+        List<TransactionHistoryDto> transactionHistoryDtoList = transactionHistoryManager.getTransactions();
+        Grid<TransactionHistoryDto> gridHistory = new Grid<>(TransactionHistoryDto.class);
+        gridHistory.setItems(transactionHistoryDtoList);
+        gridHistory.removeAllColumns();
+        gridHistory.setWidth("350px");
+        gridHistory.setHeight("300px");
+        gridHistory.setVisible(false);
+        gridHistory.addColumn(TransactionHistoryDto::getId).setHeader("#").setAutoWidth(true);
+        gridHistory.addColumn(TransactionHistoryDto::getSource).setHeader("Kto?").setAutoWidth(true);
+        gridHistory.addColumn(TransactionHistoryDto::getAmount).setHeader("Ile?").setAutoWidth(true);
+        gridHistory.addColumn(TransactionHistoryDto::getTarget).setHeader("Komu?").setAutoWidth(true);
+        gridHistory.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+        gridHistory.setHeightByRows(true);
+
+
+        Button buttonShowGrid = new Button("Pokaż/ukryj historię transakcji.", new Icon(VaadinIcon.SCALE));
+        buttonShowGrid.setWidth("290px");
+        buttonShowGrid.setIconAfterText(true);
+        buttonShowGrid.addClickListener(ClickEvent ->
+                gridHistory.setVisible(!gridHistory.isVisible()));
+
+
+        add(buttonShowGrid, gridHistory);
     }
 
 
@@ -195,9 +230,15 @@ public class PlayerOne extends VerticalLayout {
         if (howMuch < 1) {
             dialogWarning();
         } else {
-            Player sourcePlayer = playerRepo.getById(1L);
+            Player sourcePlayer = playerManager.getById(1L);
             sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
-            playerRepo.save(sourcePlayer);
+
+            transactionHistory.setSource(playerManager.getPlayerOne());
+            transactionHistory.setTarget("Bank");
+            transactionHistory.setAmount(howMuch);
+            transactionHistoryManager.save(transactionHistory);
+
+            playerManager.save(sourcePlayer);
             UI.getCurrent().getPage().reload();
         }
     }
@@ -209,13 +250,18 @@ public class PlayerOne extends VerticalLayout {
         if (howMuch < 1) {
             dialogWarning();
         } else {
-            Player sourcePlayer = playerRepo.getById(1L);
+            Player sourcePlayer = playerManager.getById(1L);
             sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
-            Player targetPlayer = playerRepo.getById(2L);
+            Player targetPlayer = playerManager.getById(2L);
             targetPlayer.setCash(targetPlayer.getCash() + howMuch);
 
-            playerRepo.save(sourcePlayer);
-            playerRepo.save(targetPlayer);
+            transactionHistory.setSource(playerManager.getPlayerOne());
+            transactionHistory.setTarget(playerManager.getPlayerTwo());
+            transactionHistory.setAmount(howMuch);
+            transactionHistoryManager.save(transactionHistory);
+
+            playerManager.save(sourcePlayer);
+            playerManager.save(targetPlayer);
             UI.getCurrent().getPage().reload();
         }
     }
@@ -228,14 +274,18 @@ public class PlayerOne extends VerticalLayout {
         if (howMuch < 1) {
             dialogWarning();
         } else {
-
-            Player sourcePlayer = playerRepo.getById(1L);
+            Player sourcePlayer = playerManager.getById(1L);
             sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
-            Player targetPlayer = playerRepo.getById(3L);
+            Player targetPlayer = playerManager.getById(3L);
             targetPlayer.setCash(targetPlayer.getCash() + howMuch);
 
-            playerRepo.save(sourcePlayer);
-            playerRepo.save(targetPlayer);
+            transactionHistory.setSource(playerManager.getPlayerOne());
+            transactionHistory.setTarget(playerManager.getPlayerThree());
+            transactionHistory.setAmount(howMuch);
+            transactionHistoryManager.save(transactionHistory);
+
+            playerManager.save(sourcePlayer);
+            playerManager.save(targetPlayer);
             UI.getCurrent().getPage().reload();
         }
     }
@@ -247,13 +297,18 @@ public class PlayerOne extends VerticalLayout {
         if (howMuch < 1) {
             dialogWarning();
         } else {
-            Player sourcePlayer = playerRepo.getById(1L);
+            Player sourcePlayer = playerManager.getById(1L);
             sourcePlayer.setCash(sourcePlayer.getCash() - howMuch);
-            Player targetPlayer = playerRepo.getById(4L);
+            Player targetPlayer = playerManager.getById(4L);
             targetPlayer.setCash(targetPlayer.getCash() + howMuch);
 
-            playerRepo.save(sourcePlayer);
-            playerRepo.save(targetPlayer);
+            transactionHistory.setSource(playerManager.getPlayerOne());
+            transactionHistory.setTarget(playerManager.getPlayerFour());
+            transactionHistory.setAmount(howMuch);
+            transactionHistoryManager.save(transactionHistory);
+
+            playerManager.save(sourcePlayer);
+            playerManager.save(targetPlayer);
             UI.getCurrent().getPage().reload();
         }
     }
@@ -269,10 +324,15 @@ public class PlayerOne extends VerticalLayout {
         if (howMuch < 1) {
             dialogWarning();
         } else {
-            Player targetPlayer = playerRepo.getById(1L);
+            Player targetPlayer = playerManager.getById(1L);
             targetPlayer.setCash(targetPlayer.getCash() + howMuch);
 
-            playerRepo.save(targetPlayer);
+            transactionHistory.setSource("Bank");
+            transactionHistory.setTarget(playerManager.getPlayerOne());
+            transactionHistory.setAmount(howMuch);
+            transactionHistoryManager.save(transactionHistory);
+
+            playerManager.save(targetPlayer);
             UI.getCurrent().getPage().reload();
         }
     }
@@ -285,10 +345,16 @@ public class PlayerOne extends VerticalLayout {
         if (howMuch < 1) {
             dialogWarning();
         } else {
-            Player targetPlayer = playerRepo.getById(2L);
+            Player targetPlayer = playerManager.getById(2L);
             targetPlayer.setCash(targetPlayer.getCash() + howMuch);
 
-            playerRepo.save(targetPlayer);
+            transactionHistory.setSource("Bank");
+            transactionHistory.setTarget(playerManager.getPlayerTwo());
+            transactionHistory.setAmount(howMuch);
+            transactionHistoryManager.save(transactionHistory);
+
+
+            playerManager.save(targetPlayer);
             UI.getCurrent().getPage().reload();
         }
     }
@@ -301,10 +367,16 @@ public class PlayerOne extends VerticalLayout {
         if (howMuch < 1) {
             dialogWarning();
         } else {
-            Player targetPlayer = playerRepo.getById(3L);
+            Player targetPlayer = playerManager.getById(3L);
             targetPlayer.setCash(targetPlayer.getCash() + howMuch);
 
-            playerRepo.save(targetPlayer);
+            transactionHistory.setSource("Bank");
+            transactionHistory.setTarget(playerManager.getPlayerThree());
+            transactionHistory.setAmount(howMuch);
+            transactionHistoryManager.save(transactionHistory);
+
+
+            playerManager.save(targetPlayer);
             UI.getCurrent().getPage().reload();
         }
     }
@@ -317,10 +389,16 @@ public class PlayerOne extends VerticalLayout {
         if (howMuch < 1) {
             dialogWarning();
         } else {
-            Player targetPlayer = playerRepo.getById(4L);
+            Player targetPlayer = playerManager.getById(4L);
             targetPlayer.setCash(targetPlayer.getCash() + howMuch);
 
-            playerRepo.save(targetPlayer);
+            transactionHistory.setSource("Bank");
+            transactionHistory.setTarget(playerManager.getPlayerFour());
+            transactionHistory.setAmount(howMuch);
+            transactionHistoryManager.save(transactionHistory);
+
+
+            playerManager.save(targetPlayer);
             UI.getCurrent().getPage().reload();
         }
     }

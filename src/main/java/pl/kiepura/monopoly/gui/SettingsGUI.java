@@ -18,7 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.kiepura.monopoly.entity.Player;
-import pl.kiepura.monopoly.repo.PlayerRepo;
+import pl.kiepura.monopoly.manager.PlayerManager;
+import pl.kiepura.monopoly.manager.TransactionHistoryManager;
 
 @Getter
 @Route("settings")
@@ -26,8 +27,9 @@ import pl.kiepura.monopoly.repo.PlayerRepo;
 @RequiredArgsConstructor
 public class SettingsGUI extends VerticalLayout {
 
-    private final PlayerRepo playerRepo;
+    private final PlayerManager playerManager;
     private final PasswordEncoder passwordEncoder;
+    private final TransactionHistoryManager transactionHistoryManager;
 
 
     @Autowired
@@ -35,6 +37,7 @@ public class SettingsGUI extends VerticalLayout {
         addPlayer(passwordEncoder);
         mainMenu();
         deletePlayers();
+        deleteHistory();
     }
 
 
@@ -59,12 +62,42 @@ public class SettingsGUI extends VerticalLayout {
         buttonCancelDeleting.addClickListener(ClickEvent -> dialogDeleteAllPlayerConfirmation.close());
 
         buttonConfirmDeleteAllPlayers.addClickListener(ClickEvent -> {
-            playerRepo.clearPlayers();
+            playerManager.clearPlayers();
             dialogDeleteAllPlayerConfirmation.close();
         });
 
 
         add(buttonDeleteAllPlayers, progressBarSplitUI, dialogDeleteAllPlayerConfirmation);
+    }
+
+
+    private void deleteHistory() {
+        ProgressBar progressBarSplitUI = new ProgressBar();
+        ProgressBar progressBarSplitUI2 = new ProgressBar();
+        progressBarSplitUI2.setIndeterminate(true);
+        Button buttonDeleteHistory = new Button("Usuń historię transakcji", new Icon(VaadinIcon.ERASER));
+        buttonDeleteHistory.setIconAfterText(true);
+
+        Button buttonConfirmDeleteAllPlayers = new Button("Tak, usuń historię transakcji!");
+        Button buttonCancelDeleting = new Button("Anuluj!");
+
+
+        Dialog dialogDeleteHistory = new Dialog();
+        Span spanConfirm = new Span("Czy na pewno chcesz usunąć historię transakcji?");
+
+        buttonDeleteHistory.addClickListener(ClickEvent -> dialogDeleteHistory.open());
+
+        dialogDeleteHistory.add(spanConfirm, progressBarSplitUI2, buttonConfirmDeleteAllPlayers, buttonCancelDeleting);
+
+        buttonCancelDeleting.addClickListener(ClickEvent -> dialogDeleteHistory.close());
+
+        buttonConfirmDeleteAllPlayers.addClickListener(ClickEvent -> {
+            transactionHistoryManager.clearHistory();
+            dialogDeleteHistory.close();
+        });
+
+
+        add(buttonDeleteHistory, progressBarSplitUI, dialogDeleteHistory);
     }
 
     private void mainMenu() {
@@ -119,7 +152,7 @@ public class SettingsGUI extends VerticalLayout {
         player.setCash(Integer.parseInt(String.valueOf(integerFieldStartCash.getValue())));
         player.setPassword(passwordEncoder.encode(String.valueOf(textFieldPassword.getValue())));
         player.setRole("ROLE_" + comboBoxRole.getValue());
-        playerRepo.save(player);
+        playerManager.save(player);
     }
 
 }

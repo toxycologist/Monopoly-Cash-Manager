@@ -24,8 +24,8 @@ import java.util.Collections;
 @Entity
 public class Player implements UserDetails {
 
-   @Id
-   @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
     private int cash;
@@ -44,7 +44,7 @@ public class Player implements UserDetails {
     }
 
     @Override
-    public String getPassword(){
+    public String getPassword() {
         return password;
     }
 
